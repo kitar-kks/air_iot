@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #test git
 #test pull
+#test pull from pi
 import rospy
 from std_msgs.msg import Int8
 
