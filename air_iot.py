@@ -11,9 +11,21 @@ auth = {
  'password':'p@ssw0rd'
 }
 
-def callback(data):
+def callback_air1_cb(data):
     rospy.loginfo(rospy.get_caller_id() + "I heard %d", data.data)
     publish.single("air_iot/Air1_cb",data.data, hostname=hostname, port=port, auth=auth)
+
+def callback_air1_alarm(data):
+    rospy.loginfo(rospy.get_caller_id() + "I heard %d", data.data)
+    publish.single("air_iot/Air1_alarm",data.data, hostname=hostname, port=port, auth=auth)
+
+def callback_air1_low_pressure(data):
+    rospy.loginfo(rospy.get_caller_id() + "I heard %d", data.data)
+    publish.single("air_iot/Air1_low_pressure",data.data, hostname=hostname, port=port, auth=auth)
+
+def callback_air1_high_pressure(data):
+    rospy.loginfo(rospy.get_caller_id() + "I heard %d", data.data)
+    publish.single("air_iot/Air1_high_pressure",data.data, hostname=hostname, port=port, auth=auth)
     
 def listener():
 
@@ -24,7 +36,10 @@ def listener():
     # run simultaneously.
     rospy.init_node('Air_IOT_PI4', anonymous=True)
 
-    rospy.Subscriber("Air1_cb", Int8, callback)
+    rospy.Subscriber("Air1_cb", Int8, callback_air1_cb)
+    rospy.Subscriber("Air1_alarm", Int8, callback_air1_alarm)
+    rospy.Subscriber("Air1_low_pressure)", Int8, callback_air1_low_pressure)
+    rospy.Subscriber("Air1_high_pressure", Int8, callback_air1_high_pressure)
 
 
     # spin() simply keeps python from exiting until this node is stopped
