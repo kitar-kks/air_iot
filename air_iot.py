@@ -1,12 +1,19 @@
 #!/usr/bin/env python
-#test git
-#test pull
-#test pull from pi
+import paho.mqtt.publish as publish
+import time
 import rospy
 from std_msgs.msg import Int8
 
+hostname = "34.139.76.224"
+port = 1883
+auth = {
+ 'username':'admin',
+ 'password':'p@ssw0rd'
+}
+
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "I heard %d", data.data)
+    publish.single("air_iot/Air1_cb",data.data, hostname=hostname, port=port, auth=auth)
     
 def listener():
 
@@ -18,6 +25,7 @@ def listener():
     rospy.init_node('Air_IOT_PI4', anonymous=True)
 
     rospy.Subscriber("Air1_cb", Int8, callback)
+
 
     # spin() simply keeps python from exiting until this node is stopped
     
