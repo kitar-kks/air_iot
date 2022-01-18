@@ -47,12 +47,15 @@ def listener():
     rospy.Subscriber("Air1_low_pressure", Int8, callback_air1_low_pressure)
     rospy.Subscriber("Air1_high_pressure", Int8, callback_air1_high_pressure)
 
-    # msg = subscribe.simple("air_iot/set_time", hostname=hostname)
     # print("%s %s" % (msg.topic, msg.payload))
-    subscribe.callback(on_message_print, "air_iot/set_time", hostname=hostname, port=port, auth=auth)
-    # pub = rospy.Publisher('set_time', String, queue_size=10)
-    # pub.publish(msg.payload)
-
+    pub = rospy.Publisher('set_time', String, queue_size=10)
+    rate = rospy.Rate(10) # 10hz
+    while not rospy.is_shutdown():
+        hello_str = "hello world %s" % rospy.get_time()
+        msg = subscribe.simple("air_iot/set_time", hostname=hostname)
+        rospy.loginfo(msg.payload)
+        pub.publish(msg.payload)
+        rate.sleep()
 
     # spin() simply keeps python from exiting until this node is stopped
     
