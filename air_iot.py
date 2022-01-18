@@ -12,6 +12,10 @@ auth = {
  'password':'p@ssw0rd'
 }
 
+def on_message_print(client, userdata, message):
+    print("%s %s" % (message.topic, message.payload))
+
+subscribe.callback(on_message_print, "air_iot/set_time", hostname=hostname, port=port, auth=auth)
 
 def callback_air1_cb(data):
     rospy.loginfo(rospy.get_caller_id() + "Air1_cb %d", data.data)
@@ -40,14 +44,14 @@ def listener():
 
     rospy.Subscriber("Air1_cb", Int8, callback_air1_cb)
     rospy.Subscriber("Air1_alarm", Int8, callback_air1_alarm)
-    rospy.Subscriber("Air1_low_pressure)", Int8, callback_air1_low_pressure)
+    rospy.Subscriber("Air1_low_pressure", Int8, callback_air1_low_pressure)
     rospy.Subscriber("Air1_high_pressure", Int8, callback_air1_high_pressure)
 
     # msg = subscribe.simple("air_iot/set_time", hostname=hostname)
     # print("%s %s" % (msg.topic, msg.payload))
-    msg = subscribe.simple("air_iot/set_time", hostname=hostname)
-    pub = rospy.Publisher('set_time', String, queue_size=10)
-    pub.publish(msg.payload)
+    subscribe.callback(on_message_print, "air_iot/set_time", hostname=hostname, port=port, auth=auth)
+    # pub = rospy.Publisher('set_time', String, queue_size=10)
+    # pub.publish(msg.payload)
 
 
     # spin() simply keeps python from exiting until this node is stopped
