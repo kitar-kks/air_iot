@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 import paho.mqtt.publish as publish
-import time
+import paho.mqtt.subscribe as subscribe
 import rospy
 from std_msgs.msg import Int8
+from std_msgs.msg import String
 
 hostname = "34.139.76.224"
 port = 1883
@@ -11,20 +12,21 @@ auth = {
  'password':'p@ssw0rd'
 }
 
+
 def callback_air1_cb(data):
-    rospy.loginfo(rospy.get_caller_id() + "I heard %d", data.data)
+    rospy.loginfo(rospy.get_caller_id() + "Air1_cb %d", data.data)
     publish.single("air_iot/Air1_cb",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_air1_alarm(data):
-    rospy.loginfo(rospy.get_caller_id() + "I heard %d", data.data)
+    rospy.loginfo(rospy.get_caller_id() + "Air1_alarm %d", data.data)
     publish.single("air_iot/Air1_alarm",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_air1_low_pressure(data):
-    rospy.loginfo(rospy.get_caller_id() + "I heard %d", data.data)
+    rospy.loginfo(rospy.get_caller_id() + "Air1_low_pressure%d", data.data)
     publish.single("air_iot/Air1_low_pressure",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_air1_high_pressure(data):
-    rospy.loginfo(rospy.get_caller_id() + "I heard %d", data.data)
+    rospy.loginfo(rospy.get_caller_id() + "Air1_high_pressure %d", data.data)
     publish.single("air_iot/Air1_high_pressure",data.data, hostname=hostname, port=port, auth=auth)
     
 def listener():
@@ -40,6 +42,12 @@ def listener():
     rospy.Subscriber("Air1_alarm", Int8, callback_air1_alarm)
     rospy.Subscriber("Air1_low_pressure)", Int8, callback_air1_low_pressure)
     rospy.Subscriber("Air1_high_pressure", Int8, callback_air1_high_pressure)
+
+    # msg = subscribe.simple("air_iot/set_time", hostname=hostname)
+    # print("%s %s" % (msg.topic, msg.payload))
+    msg = subscribe.simple("air_iot/set_time", hostname=hostname)
+    pub = rospy.Publisher('set_time', String, queue_size=10)
+    pub.publish(msg.payload)
 
 
     # spin() simply keeps python from exiting until this node is stopped
