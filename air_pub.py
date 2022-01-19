@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # license removed for brevity
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import Int8
 import paho.mqtt.subscribe as subscribe
 
 hostname = "34.139.76.224"
@@ -12,13 +12,14 @@ auth = {
 }
 
 def talker():
-    pub = rospy.Publisher('set_time', String, queue_size=10)
+    pub = rospy.Publisher('set_time', Int8, queue_size=10)
     rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         msg = subscribe.simple("air_iot/set_time", hostname=hostname,auth=auth)
-        rospy.loginfo(msg.payload)
-        pub.publish(msg.payload)
+        time_for_arduino = int(msg.payload,10)
+        rospy.loginfo(time_for_arduino)
+        pub.publish(time_for_arduino)
         rate.sleep()
 
 if __name__ == '__main__':
