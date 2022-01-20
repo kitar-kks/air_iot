@@ -3,6 +3,7 @@ import paho.mqtt.publish as publish
 import rospy
 from std_msgs.msg import Int8
 from std_msgs.msg import String
+from std_msgs.msg import Float32
 
 hostname = "34.139.76.224"
 port = 1883
@@ -44,6 +45,21 @@ def callback_air2_low_pressure(data):
 def callback_air2_high_pressure(data):
     rospy.loginfo(rospy.get_caller_id() + "Air2_high_pressure %d", data.data)
     publish.single("air_iot/Air2_high_pressure",data.data, hostname=hostname, port=port, auth=auth)
+
+ # air 1 2 status
+def callback_air1_status(data):
+    rospy.loginfo(rospy.get_caller_id() + "Air1_status %d", data.data)
+    publish.single("air_iot/Air1_status",data.data, hostname=hostname, port=port, auth=auth)
+
+def callback_air2_status(data):
+    rospy.loginfo(rospy.get_caller_id() + "Air2_status %d", data.data)
+    publish.single("air_iot/Air2_status",data.data, hostname=hostname, port=port, auth=auth)
+ # temp ros
+
+def callback_temp_ros(data):
+    rospy.loginfo(rospy.get_caller_id() + "temp_ros %d", data.data)
+    publish.single("air_iot/temp_ros",data.data, hostname=hostname, port=port, auth=auth)
+
     
 def listener():
 
@@ -63,6 +79,11 @@ def listener():
     rospy.Subscriber("Air2_alarm", Int8, callback_air2_alarm)
     rospy.Subscriber("Air2_low_pressure", Int8, callback_air2_low_pressure)
     rospy.Subscriber("Air2_high_pressure", Int8, callback_air2_high_pressure)
+
+    rospy.Subscriber("Air1_status", Int8, callback_air1_status)
+    rospy.Subscriber("Air2_status", Int8, callback_air2_status)
+
+    rospy.Subscriber("temp_ros", Float32, callback_temp_ros)
 
     # msg = subscribe.simple("air_iot/set_time", hostname=hostname)
     # print("%s %s" % (msg.topic, msg.payload))
