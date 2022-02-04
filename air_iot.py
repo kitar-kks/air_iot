@@ -81,6 +81,22 @@ def callback_air2_manual_status(data):
     rospy.loginfo(rospy.get_caller_id() + "Air2_manual_status %d", data.data)
     publish.single("air_iot/Air2_manual_status",data.data, hostname=hostname, port=port, auth=auth)
 
+#setting
+def callback_air_duty_time(data):
+    rospy.loginfo(rospy.get_caller_id() + "Air_duty_time %d", data.data)
+    publish.single("air_iot/Air_duty_time",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air_temp_on(data):
+    rospy.loginfo(rospy.get_caller_id() + "Air_temp_on %d", data.data)
+    publish.single("air_iot/Air_temp_on",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air_temp_off(data):
+    rospy.loginfo(rospy.get_caller_id() + "Air_temp_off %d", data.data)
+    publish.single("air_iot/Air_temp_off",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air_humid_on(data):
+    rospy.loginfo(rospy.get_caller_id() + "Air_humid_on %d", data.data)
+    publish.single("air_iot/Air_humid_on",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air_humid_off(data):
+    rospy.loginfo(rospy.get_caller_id() + "Air_humid_off %d", data.data)
+    publish.single("air_iot/Air_humid_off",data.data, hostname=hostname, port=port, auth=auth)
 
 def listener():
 
@@ -109,6 +125,13 @@ def listener():
     
     rospy.Subscriber("temp_ros", Float32, callback_temp_ros)
     rospy.Subscriber("humid_ros", Float32, callback_humid_ros)
+    
+    #setting
+    rospy.Subscriber("Air_duty_time", Int8, callback_air_duty_time)
+    rospy.Subscriber("Air_temp_on", Int8, callback_air_temp_on)
+    rospy.Subscriber("Air_temp_off", Int8, callback_air_temp_off)
+    rospy.Subscriber("Air_humid_on", Int8, callback_air_humid_on)
+    rospy.Subscriber("Air_humid_off", Int8, callback_air_humid_off)
 
     # msg = subscribe.simple("air_iot/set_time", hostname=hostname)
     # print("%s %s" % (msg.topic, msg.payload))
