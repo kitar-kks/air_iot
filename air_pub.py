@@ -10,6 +10,7 @@ auth = {
  'username':'admin',
  'password':'p@ssw0rd'
 }
+mqtt_topic = [("air_iot/set_time",0) ,("air_iot/set_temp_on",0) ,("air_iot/set_temp_off",0) ,("air_iot/set_humid_on",0) ,("air_iot/set_humid_on",0)]
 
 def talker():
     Rset_time = rospy.Publisher('set_time', Int8, queue_size=10)
@@ -21,14 +22,18 @@ def talker():
     rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
-        msg = subscribe.simple("air_iot/set_time", hostname=hostname,auth=auth)
-        temp_on = subscribe.simple("air_iot/set_temp_on", hostname=hostname ,auth=auth)
+        msg = subscribe.simple(mqtt_topic, hostname=hostname,auth=auth)
+        if(msg.topic == 'air_iot/set_time'):
+            time_for_arduino = msg.payload
+        if(msg.topic == 'air_iot/set_temp_on'):
+            set_temp_on = msg.payload       
+        # temp_on = subscribe.simple("air_iot/set_temp_on", hostname=hostname ,auth=auth)
         # temp_off = subscribe.simple("air_iot/set_temp_off", hostname=hostname ,auth=auth)
         # humid_on = subscribe.simple("air_iot/set_humid_on",hostname=hostname,auth=auth)
         # humid_off = subscribe.simple("air_iot/set_humid_on",hostname=hostname,auth=auth)
 
-        time_for_arduino = int(msg.payload,10)
-        set_temp_on = int(temp_on.payload,10)
+        # time_for_arduino = int(msg.payload,10)
+        # set_temp_on = int(temp_on.payload,10)
         # set_temp_off = int(temp_off.payload,10)
         # set_humid_on = int(humid_on.payload,10)
         # set_humid_off = int(humid_off.payload,10)
