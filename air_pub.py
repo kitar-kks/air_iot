@@ -35,10 +35,10 @@ def talker():
         
         rospy.loginfo(time_for_arduino)
         Rset_time.publish(time_for_arduino)
-        Rset_temp_on.publish(set_temp_on)
-        Rset_temp_off.publish(set_temp_off)
-        Rset_humid_on.publish(set_humid_on)
-        Rset_humid_off.publish(set_humid_off)
+        # Rset_temp_on.publish(set_temp_on)
+        # Rset_temp_off.publish(set_temp_off)
+        # Rset_humid_on.publish(set_humid_on)
+        # Rset_humid_off.publish(set_humid_off)
         rate.sleep()
 
 if __name__ == '__main__':

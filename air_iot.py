@@ -14,71 +14,71 @@ auth = {
 
 # Air1
 def callback_air1_cb(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air1_cb %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air1_cb %d", data.data)
     publish.single("air_iot/Air1_cb",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_air1_alarm(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air1_alarm %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air1_alarm %d", data.data)
     publish.single("air_iot/Air1_alarm",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_air1_low_pressure(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air1_low_pressure%d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air1_low_pressure%d", data.data)
     publish.single("air_iot/Air1_low_pressure",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_air1_high_pressure(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air1_high_pressure %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air1_high_pressure %d", data.data)
     publish.single("air_iot/Air1_high_pressure",data.data, hostname=hostname, port=port, auth=auth)
 
 # Air2
 def callback_air2_cb(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air2_cb %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air2_cb %d", data.data)
     publish.single("air_iot/Air2_cb",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_air2_alarm(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air2_alarm %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air2_alarm %d", data.data)
     publish.single("air_iot/Air2_alarm",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_air2_low_pressure(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air2_low_pressure%d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air2_low_pressure%d", data.data)
     publish.single("air_iot/Air2_low_pressure",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_air2_high_pressure(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air2_high_pressure %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air2_high_pressure %d", data.data)
     publish.single("air_iot/Air2_high_pressure",data.data, hostname=hostname, port=port, auth=auth)
 
  # air 1 2 status
 def callback_air1_status(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air1_status %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air1_status %d", data.data)
     publish.single("air_iot/Air1_status",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_air2_status(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air2_status %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air2_status %d", data.data)
     publish.single("air_iot/Air2_status",data.data, hostname=hostname, port=port, auth=auth)
 
 # temp humid ros
 def callback_temp_ros(data):
-    rospy.loginfo(rospy.get_caller_id() + "temp_ros %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "temp_ros %d", data.data)
     publish.single("air_iot/temp_ros",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_humid_ros(data):
-    rospy.loginfo(rospy.get_caller_id() + "humid_ros %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "humid_ros %d", data.data)
     publish.single("air_iot/humid_ros",data.data, hostname=hostname, port=port, auth=auth)
 
 # air 1 & 2 auto manual status
 def callback_air1_auto_status(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air1_auto_status %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air1_auto_status %d", data.data)
     publish.single("air_iot/Air1_auto_status",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_air1_manual_status(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air1_manual_status %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air1_manual_status %d", data.data)
     publish.single("air_iot/Air1_manual_status",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_air2_auto_status(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air2_auto_status %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air2_auto_status %d", data.data)
     publish.single("air_iot/Air2_auto_status",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_air2_manual_status(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air2_manual_status %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air2_manual_status %d", data.data)
     publish.single("air_iot/Air2_manual_status",data.data, hostname=hostname, port=port, auth=auth)
 
 #setting
