@@ -10,7 +10,7 @@ auth = {
  'username':'admin',
  'password':'p@ssw0rd'
 }
-mqtt_topic = [("air_iot/set_time",0) ,("air_iot/set_temp_on",0) ,("air_iot/set_temp_off",0) ,("air_iot/set_humid_on",0) ,("air_iot/set_humid_on",0)]
+mqtt_topic = [("air_iot/set_time",0) ,("air_iot/set_temp_on",0) ,("air_iot/set_temp_off",0) ,("air_iot/set_humid_on",0) ,("air_iot/set_humid_off",0)]
 
 def talker():
     Rset_time = rospy.Publisher('set_time', Int8, queue_size=10)
