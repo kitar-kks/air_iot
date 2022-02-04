@@ -25,8 +25,11 @@ def talker():
         msg = subscribe.simple(mqtt_topic, hostname=hostname,auth=auth)
         if(msg.topic == 'air_iot/set_time'):
             time_for_arduino = int(msg.payload,10)
+            Rset_time.publish(time_for_arduino)
+            
         if(msg.topic == 'air_iot/set_temp_on'):
-            set_temp_on = int(msg.payload,10)      
+            set_temp_on = int(msg.payload,10)
+            Rset_temp_on.publish(set_temp_on)      
         # temp_on = subscribe.simple("air_iot/set_temp_on", hostname=hostname ,auth=auth)
         # temp_off = subscribe.simple("air_iot/set_temp_off", hostname=hostname ,auth=auth)
         # humid_on = subscribe.simple("air_iot/set_humid_on",hostname=hostname,auth=auth)
@@ -39,8 +42,8 @@ def talker():
         # set_humid_off = int(humid_off.payload,10)
         
         rospy.loginfo(time_for_arduino)
-        Rset_time.publish(time_for_arduino)
-        Rset_temp_on.publish(set_temp_on)
+        # Rset_time.publish(time_for_arduino)
+        # Rset_temp_on.publish(set_temp_on)
         # Rset_temp_off.publish(set_temp_off)
         # Rset_humid_on.publish(set_humid_on)
         # Rset_humid_off.publish(set_humid_off)
