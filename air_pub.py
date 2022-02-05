@@ -53,7 +53,7 @@ def talker():
             Rset_dcfan_temp_on.publish(set_dcfan_temp)     
         
         if(msg.topic == 'air_iot/set_dcfan_step'):
-            set_dcfan_step = msg.payload
+            set_dcfan_step = int(msg.payload,10)
             rospy.loginfo(set_dcfan_step)
             Rset_dcfan_step.publish(set_dcfan_step)     
         # rospy.loginfo(time_for_arduino)
