@@ -97,6 +97,12 @@ def callback_air_humid_on(data):
 def callback_air_humid_off(data):
     rospy.loginfo(rospy.get_caller_id() + "Air_humid_off %d", data.data)
     publish.single("air_iot/Air_humid_off",data.data, hostname=hostname, port=port, auth=auth)
+def callback_dcfan_tempon(data):
+    rospy.loginfo(rospy.get_caller_id() + "Dcfan_tempon %d", data.data)
+    publish.single("air_iot/Dcfan_tempon",data.data, hostname=hostname, port=port, auth=auth)
+def callback_dcfan_step(data):
+    rospy.loginfo(rospy.get_caller_id() + "dcfan_step %d", data.data)
+    publish.single("air_iot/Dcfan_step",data.data, hostname=hostname, port=port, auth=auth)
 
 def listener():
 
@@ -132,6 +138,8 @@ def listener():
     rospy.Subscriber("Air_temp_off", Int8, callback_air_temp_off)
     rospy.Subscriber("Air_humid_on", Int8, callback_air_humid_on)
     rospy.Subscriber("Air_humid_off", Int8, callback_air_humid_off)
+    rospy.Subscriber("Dc_fan_temp_on", Int8, callback_dcfan_tempon)
+    rospy.Subscriber("Dc_fan_step", Float32, callback_dcfan_step)
 
     # msg = subscribe.simple("air_iot/set_time", hostname=hostname)
     # print("%s %s" % (msg.topic, msg.payload))
