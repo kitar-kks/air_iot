@@ -106,14 +106,14 @@ def callback_dcfan_step(data):
     publish.single("air_iot/Dcfan_step",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_source_fail (data):
-    publish.single("air_iot/ac_source_fail",data.data, hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/dc_source_fail",data.data, hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/ac_source_fail",data.data.data[0], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/dc_source_fail",data.data.data[1], hostname=hostname, port=port, auth=auth)
 # def callback_dc_source_fail (data):
 #     publish.single("air_iot/dc_source_fail",data.data[1], hostname=hostname, port=port, auth=auth)
 
 def callback_dc_fan(data):
-    publish.single("air_iot/dc_fan1",data.data, hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/dc_fan2",data.data, hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/dc_fan1",data.data.data[0], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/dc_fan2",data.data.data[1], hostname=hostname, port=port, auth=auth)
 
 # def callback_dc_fan2(data):
 #     publish.single("air_iot/dc_fan2",data.data, hostname=hostname, port=port, auth=auth)
