@@ -84,25 +84,25 @@ def callback_air2_manual_status(data):
 
 #setting
 def callback_air_duty_time(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air_duty_time %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air_duty_time %d", data.data)
     publish.single("air_iot/Air_duty_time",data.data, hostname=hostname, port=port, auth=auth)
 def callback_air_temp_on(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air_temp_on %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air_temp_on %d", data.data)
     publish.single("air_iot/Air_temp_on",data.data, hostname=hostname, port=port, auth=auth)
 def callback_air_temp_off(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air_temp_off %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air_temp_off %d", data.data)
     publish.single("air_iot/Air_temp_off",data.data, hostname=hostname, port=port, auth=auth)
 def callback_air_humid_on(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air_humid_on %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air_humid_on %d", data.data)
     publish.single("air_iot/Air_humid_on",data.data, hostname=hostname, port=port, auth=auth)
 def callback_air_humid_off(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air_humid_off %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air_humid_off %d", data.data)
     publish.single("air_iot/Air_humid_off",data.data, hostname=hostname, port=port, auth=auth)
 def callback_dcfan_tempon(data):
-    rospy.loginfo(rospy.get_caller_id() + "Dcfan_tempon %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Dcfan_tempon %d", data.data)
     publish.single("air_iot/Dcfan_tempon",data.data, hostname=hostname, port=port, auth=auth)
 def callback_dcfan_step(data):
-    rospy.loginfo(rospy.get_caller_id() + "dcfan_step %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "dcfan_step %d", data.data)
     publish.single("air_iot/Dcfan_step",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_source_fail (data):
