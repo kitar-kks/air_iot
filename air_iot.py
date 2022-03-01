@@ -4,6 +4,7 @@ import rospy
 from std_msgs.msg import Int8
 from std_msgs.msg import String
 from std_msgs.msg import Float32
+from std_msgs.msg import Int16MultiArray
 
 hostname = "34.139.76.224"
 port = 1883
@@ -143,7 +144,7 @@ def listener():
     rospy.Subscriber("temp_ros", Float32, callback_temp_ros)
     rospy.Subscriber("humid_ros", Float32, callback_humid_ros)
 
-    rospy.Subscriber("source_fail", Int8, callback_source_fail)
+    rospy.Subscriber("source_fail", Int16MultiArray, callback_source_fail)
     # rospy.Subscriber("dc_source_fail", Int8, callback_dc_source_fail)
     # rospy.Subscriber("dc_fan1_status", Int8, callback_dc_fan1)
     # rospy.Subscriber("dc_fan2_status", Int8, callback_dc_fan2)
