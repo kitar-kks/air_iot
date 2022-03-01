@@ -104,15 +104,16 @@ def callback_dcfan_step(data):
     rospy.loginfo(rospy.get_caller_id() + "dcfan_step %d", data.data)
     publish.single("air_iot/Dcfan_step",data.data, hostname=hostname, port=port, auth=auth)
 
-def callback_ac_source_fail (data):
-    publish.single("air_iot/ac_source_fail",data.data, hostname=hostname, port=port, auth=auth)
-def callback_dc_source_fail (data):
-    publish.single("air_iot/dc_source_fail",data.data, hostname=hostname, port=port, auth=auth)
+def callback_source_fail (data):
+    publish.single("air_iot/ac_source_fail",data.data[0], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/dc_source_fail",data.data[1], hostname=hostname, port=port, auth=auth)
+# def callback_dc_source_fail (data):
+#     publish.single("air_iot/dc_source_fail",data.data[1], hostname=hostname, port=port, auth=auth)
 
-def callback_dc_fan1(data):
-    publish.single("air_iot/dc_fan1",data.data, hostname=hostname, port=port, auth=auth)
-def callback_dc_fan2(data):
-    publish.single("air_iot/dc_fan2",data.data, hostname=hostname, port=port, auth=auth)
+# def callback_dc_fan1(data):
+#     publish.single("air_iot/dc_fan1",data.data, hostname=hostname, port=port, auth=auth)
+# def callback_dc_fan2(data):
+#     publish.single("air_iot/dc_fan2",data.data, hostname=hostname, port=port, auth=auth)
 
 def listener():
 
@@ -142,11 +143,11 @@ def listener():
     rospy.Subscriber("temp_ros", Float32, callback_temp_ros)
     rospy.Subscriber("humid_ros", Float32, callback_humid_ros)
 
-    rospy.Subscriber("ac_source_fail", Int8, callback_ac_source_fail)
-    rospy.Subscriber("dc_source_fail", Int8, callback_dc_source_fail)
+    rospy.Subscriber("source_fail", Int8, callback_source_fail)
+    # rospy.Subscriber("dc_source_fail", Int8, callback_dc_source_fail)
+    # rospy.Subscriber("dc_fan1_status", Int8, callback_dc_fan1)
+    # rospy.Subscriber("dc_fan2_status", Int8, callback_dc_fan2)
 
-    rospy.Subscriber("dc_fan1_status", Int8, callback_dc_fan1)
-    rospy.Subscriber("dc_fan2_status", Int8, callback_dc_fan2)
     #setting
     rospy.Subscriber("Air_duty_time", Int8, callback_air_duty_time)
     rospy.Subscriber("Air_temp_on", Int8, callback_air_temp_on)
