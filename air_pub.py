@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-# license removed for brevity
+
 import rospy
 from std_msgs.msg import Int8
 from std_msgs.msg import Float32
 import paho.mqtt.subscribe as subscribe
+from gpiozero import CPUTemperature
 
 hostname = "34.139.76.224"
 port = 1883
@@ -14,6 +15,8 @@ auth = {
 mqtt_topic = [("air_iot/set_time",0) ,("air_iot/set_temp_on",0) ,("air_iot/set_temp_off",0) ,("air_iot/set_humid_on",0) ,
 ("air_iot/set_humid_off",0),("air_iot/set_dcfan_temp_on",0),("air_iot/set_dcfan_step",0)]
 
+
+
 def talker():
     Rset_time = rospy.Publisher('set_time', Int8, queue_size=10)
     Rset_temp_on = rospy.Publisher('set_temp_on', Int8, queue_size=10)
@@ -22,7 +25,8 @@ def talker():
     Rset_humid_off = rospy.Publisher('set_humid_off', Int8, queue_size=10)
     Rset_dcfan_temp_on = rospy.Publisher('set_dcfan_temp_on', Int8, queue_size=10)
     Rset_dcfan_step = rospy.Publisher('set_dcfan_step', Float32, queue_size=10)
-
+    Rtemp_cpu_pi = rospy.Publisher ('set_temp_cpu_pi' , Float32, queue_size=10)
+    
     rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
@@ -57,6 +61,9 @@ def talker():
             rospy.loginfo(set_dcfan_step)
             Rset_dcfan_step.publish(set_dcfan_step)     
         # rospy.loginfo(time_for_arduino)
+        cpu = CPUTemperature()
+        Rtemp_cpu_pi.publish(cpu.temperature)
+        rospy.loginfo(cpu.temperature)
         rate.sleep()
 
 if __name__ == '__main__':
