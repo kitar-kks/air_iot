@@ -63,6 +63,7 @@ def talker():
         # rospy.loginfo(time_for_arduino)
         cpu = CPUTemperature()
         Rtemp_cpu_pi.publish(cpu.temperature)
+        rospy.loginfo(cpu.temperature)
         rate.sleep()
 
 if __name__ == '__main__':
