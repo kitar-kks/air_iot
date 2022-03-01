@@ -104,6 +104,10 @@ def callback_dcfan_step(data):
     rospy.loginfo(rospy.get_caller_id() + "dcfan_step %d", data.data)
     publish.single("air_iot/Dcfan_step",data.data, hostname=hostname, port=port, auth=auth)
 
+def callback_ac_source_fail (data):
+    publish.single("air_iot/ac_source_fail",data.data, hostname=hostname, port=port, auth=auth)
+def callback_dc_source_fail (data):
+    publish.single("air_iot/dc_source_fail",data.data, hostname=hostname, port=port, auth=auth)
 def listener():
 
     # In ROS, nodes are uniquely named. If two nodes with the same
@@ -131,6 +135,9 @@ def listener():
     
     rospy.Subscriber("temp_ros", Float32, callback_temp_ros)
     rospy.Subscriber("humid_ros", Float32, callback_humid_ros)
+
+    rospy.Subscriber("ac_source_fail", Int8, callback_ac_source_fail)
+    rospy.Subscriber("dc_source_fail", Int8, callback_dc_source_fail)
     
     #setting
     rospy.Subscriber("Air_duty_time", Int8, callback_air_duty_time)
