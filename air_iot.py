@@ -106,10 +106,10 @@ def callback_dcfan_step(data):
     publish.single("air_iot/Dcfan_step",data.data, hostname=hostname, port=port, auth=auth)
 
 def callback_source_fail (data):
-    rospy.loginfo(rospy.get_caller_id() + "ac_fail %d", data.data[0])
-    rospy.loginfo(rospy.get_caller_id() + "dc_fail %d", data.data[1])
-    publish.single("air_iot/ac_source_fail",data.data[0], hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/dc_source_fail",data.data[1], hostname=hostname, port=port, auth=auth)
+    rospy.loginfo(rospy.get_caller_id() + "ac_fail %d", data.data[1])
+    rospy.loginfo(rospy.get_caller_id() + "dc_fail %d", data.data[2])
+    publish.single("air_iot/ac_source_fail",data.data[1], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/dc_source_fail",data.data[2], hostname=hostname, port=port, auth=auth)
 # def callback_dc_source_fail (data):
 #     publish.single("air_iot/dc_source_fail",data.data[1], hostname=hostname, port=port, auth=auth)
 
