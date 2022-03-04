@@ -15,7 +15,12 @@ auth = {
 mqtt_topic = [("air_iot/set_time",0) ,("air_iot/set_temp_on",0) ,("air_iot/set_temp_off",0) ,("air_iot/set_humid_on",0) ,
 ("air_iot/set_humid_off",0),("air_iot/set_dcfan_temp_on",0),("air_iot/set_dcfan_step",0)]
 
+cpu = CPUTemperature()
+def send_temp_cpu_pi(event):
+    Rtemp_cpu_pi.publish(cpu.temperature)
+    rospy.loginfo(cpu.temperature)
 
+rospy.Timer(rospy.Duration(1), send_temp_cpu_pi)
 
 def talker():
     Rset_time = rospy.Publisher('set_time', Int8, queue_size=10)
@@ -61,9 +66,6 @@ def talker():
             rospy.loginfo(set_dcfan_step)
             Rset_dcfan_step.publish(set_dcfan_step)     
         # rospy.loginfo(time_for_arduino)
-        cpu = CPUTemperature()
-        Rtemp_cpu_pi.publish(cpu.temperature)
-        rospy.loginfo(cpu.temperature)
         rate.sleep()
 
 if __name__ == '__main__':
