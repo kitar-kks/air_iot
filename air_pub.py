@@ -17,6 +17,7 @@ mqtt_topic = [("air_iot/set_time",0) ,("air_iot/set_temp_on",0) ,("air_iot/set_t
 
 cpu = CPUTemperature()
 def send_temp_cpu_pi(event):
+    Rtemp_cpu_pi = rospy.Publisher ('set_temp_cpu_pi' , Float32, queue_size=10)
     Rtemp_cpu_pi.publish(cpu.temperature)
     rospy.loginfo(cpu.temperature)
 
@@ -30,7 +31,7 @@ def talker():
     Rset_humid_off = rospy.Publisher('set_humid_off', Int8, queue_size=10)
     Rset_dcfan_temp_on = rospy.Publisher('set_dcfan_temp_on', Int8, queue_size=10)
     Rset_dcfan_step = rospy.Publisher('set_dcfan_step', Float32, queue_size=10)
-    Rtemp_cpu_pi = rospy.Publisher ('set_temp_cpu_pi' , Float32, queue_size=10)
+    # Rtemp_cpu_pi = rospy.Publisher ('set_temp_cpu_pi' , Float32, queue_size=10)
     
     rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(10) # 10hz

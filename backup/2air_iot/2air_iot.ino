@@ -5,6 +5,7 @@
 #include <std_msgs/Int16MultiArray.h>
 #include "EasyNextionLibrary.h"
 #include <ModbusMaster.h>
+#include <avr/wdt.h>
 
 #define MAX485_DE      4
 #define MAX485_RE_NEG  5
@@ -162,8 +163,7 @@ ros::Subscriber<std_msgs::Float32> Rset_dcfan_step("set_dcfan_step", &setting_dc
 ros::Subscriber<std_msgs::Float32> temp_cpu_pi("set_temp_cpu_pi", &setting_temp_cpu_pi);
 
 void setup() {
-   nh.initNode();
-   
+   nh.initNode();   
    /////
    nh.advertise(air1alarm);
    nh.advertise(air2alarm);
@@ -206,10 +206,12 @@ void setup() {
    ///// nextion
    myNex.begin(115200);
    delay(500);
-  myNex.writeStr("page 0"); // For synchronizing Nextion page in case of reset to Arduino
-  delay(50);
-  myNex.lastCurrentPageId = 1;
-
+   myNex.writeStr("page 0"); // For synchronizing Nextion page in case of reset to Arduino
+   delay(50);
+   myNex.lastCurrentPageId = 1;
+   ////// watch dog
+   wdt_enable(WDTO_4S);
+   
   // Air1
   pinMode(Air1_cb,INPUT_PULLUP);
   pinMode(Air1_alarm,INPUT);
@@ -572,7 +574,7 @@ void loop() {
       }
   
       ///// AC , DC Source fail
-      if(digitalRead(Ac_source_fail) == HIGH &&  Ac_source_fail_on == true)
+      if(digitalRead(Ac_source_fail) == HIGH && millis() - time_ac_fail_off >= interval)
       {
         myNex.writeStr("t2.txt","Off");
         myNex.writeNum("t2.pco",63488); /// red color
@@ -581,7 +583,7 @@ void loop() {
         Ac_source_fail_on = false;
         time_ac_fail_off = millis();
       }
-      if(digitalRead(Dc_source_fail) == HIGH && Dc_source_fail_on == true)
+      if(digitalRead(Dc_source_fail) == HIGH && millis() - time_dc_fail_off >= interval )
       {
         myNex.writeStr("t3.txt","Off");
         myNex.writeNum("t3.pco",63488); /// red color
@@ -590,22 +592,20 @@ void loop() {
         Dc_source_fail_on = false;
         time_dc_fail_off = millis();
       }
-      if(digitalRead(Ac_source_fail) == LOW && Ac_source_fail_on == false)
+      if(digitalRead(Ac_source_fail) == LOW && millis() - time_ac_fail_on >= interval )
       {
         myNex.writeStr("t2.txt","On");
         myNex.writeNum("t2.pco",2032); /// green color
         Rsource_fail.data[1] = digitalRead(Ac_source_fail);
-
         ac_dc_fail.publish(&Rsource_fail);
         Ac_source_fail_on = true;
         time_ac_fail_on = millis();
       }
-      if(digitalRead(Dc_source_fail) == LOW && Dc_source_fail_on == false)
+      if(digitalRead(Dc_source_fail) == LOW && millis() - time_dc_fail_on >= interval)
       {
         myNex.writeStr("t3.txt","On");
         myNex.writeNum("t3.pco",2032); /// green color
         Rsource_fail.data[2] = digitalRead(Dc_source_fail);
-
         ac_dc_fail.publish(&Rsource_fail);
         Dc_source_fail_on = true;
         time_dc_fail_on = millis();
@@ -787,8 +787,7 @@ void loop() {
       myNex.writeNum("t5.pco",34784); /// green color
       myNex.writeStr("t6.txt","Low");
       myNex.writeNum("t6.pco",34784); /// green color
-      
-      
+            
       dc_fan_low_working = true;          
       time_dc_fan_low_on = millis();
     }
@@ -886,6 +885,7 @@ void loop() {
     }
   }
   
+  wdt_reset(); //// if clock delay more than 4s reset
   nh.spinOnce();
 
 }
