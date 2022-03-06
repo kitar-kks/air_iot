@@ -21,7 +21,7 @@ def send_temp_cpu_pi(event):
     Rtemp_cpu_pi.publish(cpu.temperature)
     rospy.loginfo(cpu.temperature)
 
-rospy.Timer(rospy.Duration(1), send_temp_cpu_pi)
+rospy.Timer(rospy.Duration(3), send_temp_cpu_pi)
 
 def talker():
     Rset_time = rospy.Publisher('set_time', Int8, queue_size=10)
