@@ -15,7 +15,7 @@ auth = {
 
 # Air1
 def callback_air1_alarm(data):
-    # rospy.loginfo(rospy.get_caller_id() + "Air1_alarm %d", data.data)
+    rospy.loginfo(rospy.get_caller_id() + "Air1_alarm %d", data.data[0])
     publish.single("air_iot/Air1_cb",data.data[0], hostname=hostname, port=port, auth=auth)
     publish.single("air_iot/Air1_alarm",data.data[1], hostname=hostname, port=port, auth=auth)
     publish.single("air_iot/Air1_low_pressure",data.data[2], hostname=hostname, port=port, auth=auth)
