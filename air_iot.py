@@ -15,7 +15,7 @@ auth = {
 
 # Air1
 def callback_air1_alarm(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air1_alarm %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air1_alarm %d", data.data)
     publish.single("air_iot/Air1_cb",data.data[0], hostname=hostname, port=port, auth=auth)
     publish.single("air_iot/Air1_alarm",data.data[1], hostname=hostname, port=port, auth=auth)
     publish.single("air_iot/Air1_low_pressure",data.data[2], hostname=hostname, port=port, auth=auth)
@@ -23,7 +23,7 @@ def callback_air1_alarm(data):
 
 # Air2
 def callback_air2_alarm(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air2_alarm %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air2_alarm %d", data.data)
     publish.single("air_iot/Air2_cb",data.data[0], hostname=hostname, port=port, auth=auth)
     publish.single("air_iot/Air2_alarm",data.data[1], hostname=hostname, port=port, auth=auth)
     publish.single("air_iot/Air2_low_pressure",data.data[2], hostname=hostname, port=port, auth=auth)
@@ -31,13 +31,13 @@ def callback_air2_alarm(data):
 
 # air 1 2 status
 def callback_air1_status(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air1_status %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air1_status %d", data.data)
     publish.single("air_iot/Air1_status",data.data[0], hostname=hostname, port=port, auth=auth)
     publish.single("air_iot/Air1_auto_status",data.data[1], hostname=hostname, port=port, auth=auth)
     publish.single("air_iot/Air1_manual_status",data.data[2], hostname=hostname, port=port, auth=auth)
 
 def callback_air2_status(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air2_status %d", data.data)
+    # rospy.loginfo(rospy.get_caller_id() + "Air2_status %d", data.data)
     publish.single("air_iot/Air2_status",data.data[0], hostname=hostname, port=port, auth=auth)
     publish.single("air_iot/Air2_auto_status",data.data[1], hostname=hostname, port=port, auth=auth)
     publish.single("air_iot/Air2_manual_status",data.data[2], hostname=hostname, port=port, auth=auth)
