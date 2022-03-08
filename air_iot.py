@@ -99,11 +99,13 @@ def callback_current(data):
     publish.single("air_iot/i_l3",data.data[3], hostname=hostname, port=port, auth=auth)
 def callback_power(data):
     publish.single("air_iot/pf_3p",data.data[0], hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/cp_3p",data.data[1], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/ac_3p",data.data[1], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/ac_p_l1",data.data[2], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/ac_p_l2",data.data[3], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/ac_p_l3",data.data[4], hostname=hostname, port=port, auth=auth)
 def callback_enerygy(data):
-    publish.single("air_iot/ac_power_3p",data.data[0], hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/ac_energy",data.data[1], hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/freq",data.data[2], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/ac_energy",data.data[0], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/freq",data.data[1], hostname=hostname, port=port, auth=auth)
 def listener():
 
     # In ROS, nodes are uniquely named. If two nodes with the same
