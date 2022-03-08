@@ -35,7 +35,7 @@ def talker():
     rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
-        msg = subscribe.simple(mqtt_topic, hostname=hostname,auth=auth)
+        msg = subscribe.simple(mqtt_topic, hostname=hostname,keepalive=0,auth=auth)
         if(msg.topic == 'air_iot/set_time'):
             time_for_arduino = int(msg.payload,10)
             # rospy.loginfo(time_for_arduino)
