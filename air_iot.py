@@ -5,13 +5,15 @@ from std_msgs.msg import Int8
 from std_msgs.msg import String
 from std_msgs.msg import Float32
 from std_msgs.msg import Int8MultiArray
-
+from std_msgs.msg import UInt32MultiArray
+from std_msgs.msg import Int32MultiArray
 hostname = "34.139.76.224"
 port = 1883
 auth = {
  'username':'admin',
  'password':'p@ssw0rd'
 }
+
 
 # Air1
 def callback_air1_status(data):
@@ -81,7 +83,27 @@ def callback_dc_fan(data):
     publish.single("air_iot/dc_fan1",data.data[0], hostname=hostname, port=port, auth=auth)
     publish.single("air_iot/dc_fan2",data.data[1], hostname=hostname, port=port, auth=auth)
 
-
+#power meter
+def callback_voltage(data):
+    publish.single("air_iot/v_system",data.data[0], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/v_p1",data.data[1], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/v_p2",data.data[2], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/v_p3",data.data[3], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/v_l1",data.data[4], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/v_l2",data.data[5], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/v_l3",data.data[6], hostname=hostname, port=port, auth=auth)
+def callback_current(data):
+    publish.single("air_iot/i_system",data.data[0], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/i_l1",data.data[1], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/i_l2",data.data[2], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/i_l3",data.data[3], hostname=hostname, port=port, auth=auth)
+def callback_power(data):
+    publish.single("air_iot/pf_3p",data.data[0], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/cp_3p",data.data[1], hostname=hostname, port=port, auth=auth)
+def callback_enerygy(data):
+    publish.single("air_iot/ac_power_3p",data.data[0], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/ac_energy",data.data[1], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/freq",data.data[2], hostname=hostname, port=port, auth=auth)
 def listener():
 
     # In ROS, nodes are uniquely named. If two nodes with the same
@@ -113,6 +135,11 @@ def listener():
     rospy.Subscriber("source_fail", Int8MultiArray, callback_source_fail)
 
     rospy.Subscriber("dc_fan_status", Int8MultiArray, callback_dc_fan)
+    
+    rospy.Subscriber("voltage", UInt32MultiArray, callback_voltage)
+    rospy.Subscriber("current", UInt32MultiArray, callback_current)
+    rospy.Subscriber("power", Int32MultiArray, callback_power)
+    rospy.Subscriber("energy", UInt32MultiArray, callback_enerygy)
 
     #setting
     rospy.Subscriber("Air_setting", Int8MultiArray, callback_air_setting)
@@ -123,7 +150,6 @@ def listener():
     # print("%s %s" % (msg.topic, msg.payload))
 
     # spin() simply keeps python from exiting until this node is stopped
-    
     rospy.spin()
 
 if __name__ == '__main__':

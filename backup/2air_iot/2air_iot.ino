@@ -3,6 +3,8 @@
 #include <std_msgs/Float32.h>
 #include <std_msgs/Int8.h>
 #include <std_msgs/Int8MultiArray.h>
+#include <std_msgs/Int32MultiArray.h>
+#include <std_msgs/UInt32MultiArray.h>
 #include "EasyNextionLibrary.h"
 #include <ModbusMaster.h>
 #include <avr/wdt.h>
@@ -10,7 +12,7 @@
 #define MAX485_DE      4
 #define MAX485_RE_NEG  5
 
-ModbusMaster node;
+ModbusMaster node,node1;
 
 const int Air1_cb = 22, Air1_alarm = 23, Air1_low_pressure = 24, Air1_high_pressure = 25;
 const int Air2_cb = 26, Air2_alarm = 27, Air2_low_pressure = 28, Air2_high_pressure = 29;
@@ -34,6 +36,22 @@ int h = 4, interval = 1000;
 
 float dc_med=0.0 ,dc_high=0.0 ,dc_low_off=0.0 ,dc_high_off=0.0;
 
+/////// power meter
+int address_voltage[7] = {0x1000,0x1002,0x1004,0x1006,0x1008,0x100A,0x100C}; // V unsinged int 32
+int address_current[4] = {0x100E,0x1010,0x1012,0x1014};  //mA  unsinged int 32
+int address_power[2] = {0x1016,0x101E}; // *1000 singed int 32
+int address_active_power = 0x102E; /// signed int 3pahse active power(W)
+int address_active_energy = 0x103E; //// unsigned int 32  3-PHASE SYS. ACTIVE ENERGY (Wh*100)
+int address_freq = 0x1046; /// freq (mHz)  Unsigned  int 
+
+  
+uint32_t data_voltage[7],data_current[4],data_power[2],data_energy[3];
+
+uint32_t result_voltage[7] ,result_current[4];
+int32_t result_power[2],result_active_power;
+uint32_t result_active_energy,result_freq;
+
+////////
 unsigned long previous_time = 0,pre_time_air1=0,pre_time_air2=0 ,time_power_meter=0,time_temp=0;
 unsigned long air1_time_count = 30,air2_time_count = 30; ///// timer air
 unsigned long air1_time_manual_count = 0,air2_time_manual_count = 0;
@@ -57,7 +75,7 @@ unsigned long time_dc_fan_low_off = 0, time_dc_fan_medium_off = 0,time_dc_fan_hi
 
 unsigned long time_Fire1_alarm_on = 0,time_Fire1_alarm_off = 0,time_Fire2_alarm_on = 0,time_Fire2_alarm_off = 0;
 unsigned long time_ac_fail_on = 0,time_dc_fail_on = 0,time_ac_fail_off = 0,time_dc_fail_off = 0;
-unsigned long time_send_air_status = 0,time_send_air_alarm = 0 ,time_send_source_fail = 0;
+unsigned long time_send_source_fail = 0,time_send_setting = 0;
 
 bool Air1_status_on = false, Air2_status_on = false;
 bool Air1_cb_on = false,Air1_alarm_on = false,Air1_low_on = false, Air1_high_on = false;
@@ -91,6 +109,8 @@ std_msgs::Float32 Rtemp,Rhumid,Rdc_fan_step_offset;
 
 std_msgs::Int8MultiArray Rsource_fail ,Rdc_fan,RAir_setting;
 
+std_msgs::UInt32MultiArray Rvoltage ,Rcurrent, Renergy;
+std_msgs::Int32MultiArray Rpower;
 
 //ros::Publisher air1alarm("Air1_alarm",&RAir1_alarm);
 //ros::Publisher air2alarm("Air2_alarm",&RAir2_alarm);
@@ -125,6 +145,12 @@ ros::Publisher dcfanstep("Dc_fan_step",&Rdc_fan_step_offset);
 
 ros::Publisher ac_dc_fail("source_fail",&Rsource_fail);
 ros::Publisher dc_fan("dc_fan_status",&Rdc_fan);
+
+//// power meter
+ros::Publisher voltage("voltage",&Rvoltage);
+ros::Publisher current("current",&Rcurrent);
+ros::Publisher power("power",&Rpower);
+ros::Publisher energy("energy",&Renergy);
 
 void preTransmission()
 {
@@ -187,6 +213,61 @@ ros::Subscriber<std_msgs::Float32> Rset_dcfan_step("set_dcfan_step", &setting_dc
 ros::Subscriber<std_msgs::Float32> temp_cpu_pi("set_temp_cpu_pi", &setting_temp_cpu_pi);
 
 /// power meter 
+void power_meter()
+{
+  //// voltage 3p-vol,vp(L1-N),vp L2-N,vp L3-N,vl L1-2,vl L2-3,vl L3-1 (V)
+  for(int i=0 ; i<7 ;i++)
+  {
+    result_voltage[i] = node.readHoldingRegisters(address_voltage[i],2);
+    if(result_voltage[i] == node.ku8MBSuccess)
+    {
+      data_voltage[i] = node.getResponseBuffer(1);
+      Rvoltage.data[i] = data_voltage[i];
+    }
+  }
+  //// current 3p-current, I_line L1, I L2, I L3 (mA)
+  for(int i=0 ; i<4 ;i++)
+  {
+    result_current[i] = node.readHoldingRegisters(address_current[i],2);
+    if(result_current[i] == node.ku8MBSuccess)
+    {
+      data_current[i] = node.getResponseBuffer(1);
+      Rcurrent.data[i] = data_current[i];
+    }
+  }
+  /// power  3-PHASE SYS. POWER FACTOR && cos pi (*1000)
+  for(int i=0 ; i<2 ;i++)
+  {
+    result_power[i] = node.readHoldingRegisters(address_power[i],2);
+    if(result_power[i] == node.ku8MBSuccess)
+    {
+      data_power[i] = node.getResponseBuffer(1);
+      Rpower.data[i] = data_power[i];
+    }
+  }
+  //// 3-phase active power (VA)
+    result_active_power = node.readHoldingRegisters(address_active_power,2);
+    if(result_active_power == node.ku8MBSuccess)
+    {
+      data_energy[0] = node.getResponseBuffer(1);
+      Renergy.data[0] = data_energy[0];
+    }
+   //// 3-phase active energy (W)
+   result_active_energy = node.readHoldingRegisters(address_active_energy,2);
+    if(result_active_energy == node.ku8MBSuccess)
+    {
+      data_energy[1] = node.getResponseBuffer(1);
+      Renergy.data[1] = data_energy[1];
+    }
+   //// freq (mHz)
+   result_freq = node.readHoldingRegisters(address_freq,2);
+    if(result_freq == node.ku8MBSuccess)
+    {
+      data_energy[2] = node.getResponseBuffer(1);
+      Renergy.data[2] = data_energy[2];
+    }  
+
+}
 
 void setup() {
    nh.initNode();
@@ -208,7 +289,11 @@ void setup() {
    nh.advertise(air2autostatus);
    nh.advertise(air1manualstatus);
    nh.advertise(air2manualstatus);
-   /////
+   ///// power meter
+   nh.advertise(voltage);
+   nh.advertise(current);
+   nh.advertise(power);
+   nh.advertise(energy);  
 //   RAir1_alarm.data = (int8_t*) malloc(sizeof(int) * 4);
 //   RAir2_alarm.data = (int8_t*) malloc(sizeof(int) * 4);
 //   RAir1_alarm.data_length = 4;
@@ -227,7 +312,15 @@ void setup() {
 
    Rdc_fan.data = (int8_t*) malloc(sizeof(int) * 2);
    Rdc_fan.data_length = 2;
-   
+
+   Rvoltage.data = (uint32_t*) malloc(sizeof(uint32_t) * 7);
+   Rvoltage.data_length = 7;
+   Rcurrent.data = (uint32_t*) malloc(sizeof(uint32_t) * 7);
+   Rcurrent.data_length = 4;  
+   Rpower.data = (int32_t*) malloc(sizeof(int32_t) * 2);
+   Rpower.data_length = 2;
+   Renergy.data = (uint32_t*) malloc(sizeof(uint32_t) * 3);
+   Renergy.data_length = 3;
    /////
    nh.advertise(temp_ros);
    nh.advertise(humid_ros);
@@ -255,6 +348,29 @@ void setup() {
    myNex.writeStr("page 0"); // For synchronizing Nextion page in case of reset to Arduino
    delay(50);
    myNex.lastCurrentPageId = 1;
+   myNex.writeStr("t5.txt","Off"); // DC fan1
+   myNex.writeNum("t5.pco",1055); /// blue color 
+   myNex.writeStr("t6.txt","Off"); // DC fan1
+   myNex.writeNum("t6.pco",1055); /// blue color
+   
+   myNex.writeNum("n0.val",4);   // duty time
+   myNex.writeNum("n1.val",30);    // temp on
+   myNex.writeNum("n2.val",24);  // temp off
+   myNex.writeNum("n3.val",75); // humid on
+   myNex.writeNum("n4.val",70); // humid off
+   myNex.writeNum("n5.val",30); // dc fan temp on
+   myNex.writeNum("x2.val",20); // dc fan step
+
+//   RAir_setting.data[0] = 4;
+//   RAir_setting.data[1] = 30;
+//   RAir_setting.data[2] = 24;
+//   RAir_setting.data[3] = 75;
+//   RAir_setting.data[4] = 70;
+//   Rdc_fan_temp_on.data = 30;
+//   Rdc_fan_step_offset.data = 2.0;
+//   dcfantempon.publish(&Rdc_fan_temp_on);
+//   dcfanstep.publish(&Rdc_fan_step_offset);
+//   airsetting.publish(&RAir_setting);
    ////// watch dog
    wdt_enable(WDTO_4S);
    
@@ -314,9 +430,14 @@ void setup() {
   digitalWrite(MAX485_RE_NEG, 0);
   digitalWrite(MAX485_DE, 0);
   Serial1.begin(9600);
-  node.begin(1, Serial1);  
+  node.begin(2, Serial1);  
   node.preTransmission(preTransmission);
   node.postTransmission(postTransmission);
+  node1.begin(1, Serial1);  
+  node1.preTransmission(preTransmission);
+  node1.postTransmission(postTransmission);
+  
+
 }
 
 void loop() {
@@ -324,11 +445,11 @@ void loop() {
   ///// temp & humid RS485
   if(millis() - time_temp >= 1000)
   {
-    result = node.readHoldingRegisters(0, 2);
-    if (result == node.ku8MBSuccess)
+    result = node1.readHoldingRegisters(0, 2);
+    if (result == node1.ku8MBSuccess)
     {
-      temp = node.getResponseBuffer(1)/10.0f;
-      humid = node.getResponseBuffer(0)/10.0f;
+      temp = node1.getResponseBuffer(1)/10.0f;
+      humid = node1.getResponseBuffer(0)/10.0f;
     }
     time_temp = millis();    
   }  
@@ -340,7 +461,7 @@ void loop() {
    {
     button_nextion_press = true;
    }
-   if(button_nextion_press == true)
+   if(button_nextion_press == true && millis() - time_send_setting >= interval)
    {
     ///// setting
      RAir_setting.data[0] = myNex.readNumber("n0.val");   // duty time
@@ -367,6 +488,7 @@ void loop() {
      dcfantempon.publish(&Rdc_fan_temp_on);
      dcfanstep.publish(&Rdc_fan_step_offset);
      button_nextion_press = false;
+     time_send_setting = millis();
    }
    ///// timer
   if (millis()-previous_time >= 1000)
@@ -390,7 +512,16 @@ void loop() {
     air2_time_count = air2_time_count - 1 ;
     pre_time_air2 = millis();
   }
-
+  //// time power meter
+  if( millis() - time_power_meter >= 5000)
+  {
+    power_meter();
+    voltage.publish(&Rvoltage);
+    current.publish(&Rcurrent);
+    power.publish(&Rpower);
+    energy.publish(&Renergy);
+    time_power_meter = millis();
+  }
     ///// Fire Alarm 
   if(digitalRead(Fire1_alarm) == HIGH && Fire1_alarm_on == true) //// Normal (logic High)
   {
@@ -623,50 +754,43 @@ void loop() {
       }
         
       ///// AC , DC Source fail
-      if(digitalRead(Ac_source_fail) == HIGH && Ac_source_fail_on == true)
+      if(digitalRead(Ac_source_fail) == HIGH && Ac_source_fail_on == true && millis()- time_ac_fail_off >= interval)
       {
         myNex.writeStr("t2.txt","Off");
         myNex.writeNum("t2.pco",63488); /// red color
         Rsource_fail.data[0] = digitalRead(Ac_source_fail);
-//        ac_dc_fail.publish(&Rsource_fail);
+        ac_dc_fail.publish(&Rsource_fail);
         Ac_source_fail_on = false;
         time_ac_fail_off = millis();
       }
-      if(digitalRead(Dc_source_fail) == HIGH && Dc_source_fail_on == true )
+      if(digitalRead(Dc_source_fail) == HIGH && Dc_source_fail_on == true && millis()- time_dc_fail_off >= interval)
       {
         myNex.writeStr("t3.txt","Off");
         myNex.writeNum("t3.pco",63488); /// red color
         Rsource_fail.data[1] = digitalRead(Dc_source_fail);
-//        ac_dc_fail.publish(&Rsource_fail);
+        ac_dc_fail.publish(&Rsource_fail);
         Dc_source_fail_on = false;
         time_dc_fail_off = millis();
       }
-      if(digitalRead(Ac_source_fail) == LOW && Ac_source_fail_on == false )
+      if(digitalRead(Ac_source_fail) == LOW && Ac_source_fail_on == false && millis()- time_ac_fail_on >= interval)
       {
         myNex.writeStr("t2.txt","On");
         myNex.writeNum("t2.pco",2032); /// green color
         Rsource_fail.data[0] = digitalRead(Ac_source_fail);
-//        ac_dc_fail.publish(&Rsource_fail);
+        ac_dc_fail.publish(&Rsource_fail);
         Ac_source_fail_on = true;
         time_ac_fail_on = millis();
       }
-      if(digitalRead(Dc_source_fail) == LOW && Dc_source_fail_on == false)
+      if(digitalRead(Dc_source_fail) == LOW && Dc_source_fail_on == false&& millis()- time_dc_fail_on >= interval)
       {
         myNex.writeStr("t3.txt","On");
         myNex.writeNum("t3.pco",2032); /// green color
         Rsource_fail.data[1] = digitalRead(Dc_source_fail);
-//        ac_dc_fail.publish(&Rsource_fail);
+        ac_dc_fail.publish(&Rsource_fail);
         Dc_source_fail_on = true;
         time_dc_fail_on = millis();
       }      
-      
-      //// send data AC , DC Source fail
-     if(millis() - time_send_source_fail >= interval)
-    {
-      ac_dc_fail.publish(&Rsource_fail);
-      time_send_source_fail = millis();
-    }
-    
+          
         ////// Air1 Auto
     if( alarm_for_air1 == false && fire_alarm == false)
       {                  
@@ -793,7 +917,7 @@ void loop() {
     }
     
        ////// if alarm turn off one and turn on another && Alarm_output
-     if (alarm_for_air1_cb == true || alarm_for_air1_alarm == true || alarm_for_air1_low == true || alarm_for_air1_high == true)
+     if ((alarm_for_air1_cb == true || alarm_for_air1_alarm == true || alarm_for_air1_low == true || alarm_for_air1_high == true) && air1_auto == true)
      {
       digitalWrite(Air1_onoff_control,HIGH);
       digitalWrite(Air2_onoff_control,LOW); ///// LOW == active
@@ -801,7 +925,7 @@ void loop() {
       alarm_for_air1 = true;
       digitalWrite(Alarm_output,HIGH);   
      }
-     if (alarm_for_air2_cb == true || alarm_for_air2_alarm == true || alarm_for_air2_low == true || alarm_for_air2_high == true)
+     if ((alarm_for_air2_cb == true || alarm_for_air2_alarm == true || alarm_for_air2_low == true || alarm_for_air2_high == true) && air2_auto == true)
      {
       digitalWrite(Air1_onoff_control,LOW);
       digitalWrite(Air2_onoff_control,HIGH);
