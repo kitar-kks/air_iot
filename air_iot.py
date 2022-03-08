@@ -4,7 +4,7 @@ import rospy
 from std_msgs.msg import Int8
 from std_msgs.msg import String
 from std_msgs.msg import Float32
-from std_msgs.msg import Int16MultiArray
+from std_msgs.msg import Int8MultiArray
 
 hostname = "34.139.76.224"
 port = 1883
@@ -89,21 +89,21 @@ def listener():
     # run simultaneously.
     rospy.init_node('Air_IOT_PI4', anonymous=True)
 
-    rospy.Subscriber("Air1_status", Int16MultiArray, callback_air1_status)
-    rospy.Subscriber("Air1_alarm", Int16MultiArray, callback_air1_alarm)
+    rospy.Subscriber("Air1_status", Int8MultiArray, callback_air1_status)
+    rospy.Subscriber("Air1_alarm", Int8MultiArray, callback_air1_alarm)
         
-    rospy.Subscriber("Air2_status", Int16MultiArray, callback_air2_status)
-    rospy.Subscriber("Air2_alarm", Int16MultiArray, callback_air2_alarm)
+    rospy.Subscriber("Air2_status", Int8MultiArray, callback_air2_status)
+    rospy.Subscriber("Air2_alarm", Int8MultiArray, callback_air2_alarm)
     
     rospy.Subscriber("temp_ros", Float32, callback_temp_ros)
     rospy.Subscriber("humid_ros", Float32, callback_humid_ros)
 
-    rospy.Subscriber("source_fail", Int16MultiArray, callback_source_fail)
+    rospy.Subscriber("source_fail", Int8MultiArray, callback_source_fail)
 
-    rospy.Subscriber("dc_fan_status", Int16MultiArray, callback_dc_fan)
+    rospy.Subscriber("dc_fan_status", Int8MultiArray, callback_dc_fan)
 
     #setting
-    rospy.Subscriber("Air_setting", Int16MultiArray, callback_air_setting)
+    rospy.Subscriber("Air_setting", Int8MultiArray, callback_air_setting)
     rospy.Subscriber("Dc_fan_temp_on", Int8, callback_dcfan_tempon)
     rospy.Subscriber("Dc_fan_step", Float32, callback_dcfan_step)
 
