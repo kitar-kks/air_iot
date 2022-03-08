@@ -14,39 +14,41 @@ auth = {
 }
 
 # Air1
+def callback_air1_status(data):
+    publish.single("air_iot/Air1_status",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air1_auto_status(data):
+    publish.single("air_iot/Air1_auto_status",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air1_manual_status(data):
+    publish.single("air_iot/Air1_manual_status",data.data, hostname=hostname, port=port, auth=auth)
 def callback_air1_alarm(data):
-    rospy.loginfo(rospy.get_caller_id() + "Air1_cb %d", data.data[0])
-    publish.single("air_iot/Air1_cb",data.data[0], hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/Air1_alarm",data.data[1], hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/Air1_low_pressure",data.data[2], hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/Air1_high_pressure",data.data[3], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/Air1_alarm",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air1_cb(data):
+    publish.single("air_iot/Air1_cb",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air1_low(data):
+    publish.single("air_iot/Air1_low_pressure",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air1_high(data):
+    publish.single("air_iot/Air1_high_pressure",data.data, hostname=hostname, port=port, auth=auth)
 
 # Air2
-def callback_air2_alarm(data):
-    # rospy.loginfo(rospy.get_caller_id() + "Air2_alarm %d", data.data)
-    publish.single("air_iot/Air2_cb",data.data[0], hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/Air2_alarm",data.data[1], hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/Air2_low_pressure",data.data[2], hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/Air2_high_pressure",data.data[3], hostname=hostname, port=port, auth=auth)
-
-# air 1 2 status
-def callback_air1_status(data):
-    # rospy.loginfo(rospy.get_caller_id() + "Air1_status %d", data.data)
-    publish.single("air_iot/Air1_status",data.data[0], hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/Air1_auto_status",data.data[1], hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/Air1_manual_status",data.data[2], hostname=hostname, port=port, auth=auth)
-
 def callback_air2_status(data):
-    # rospy.loginfo(rospy.get_caller_id() + "Air2_status %d", data.data)
-    publish.single("air_iot/Air2_status",data.data[0], hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/Air2_auto_status",data.data[1], hostname=hostname, port=port, auth=auth)
-    publish.single("air_iot/Air2_manual_status",data.data[2], hostname=hostname, port=port, auth=auth)
+    publish.single("air_iot/Air2_status",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air2_auto_status(data):
+    publish.single("air_iot/Air2_auto_status",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air2_manual_status(data):
+    publish.single("air_iot/Air2_manual_status",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air2_alarm(data):
+    publish.single("air_iot/Air2_alarm",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air2_cb(data):
+    publish.single("air_iot/Air2_cb",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air2_low(data):
+    publish.single("air_iot/Air2_low_pressure",data.data, hostname=hostname, port=port, auth=auth)
+def callback_air2_high(data):
+    publish.single("air_iot/Air2_high_pressure",data.data, hostname=hostname, port=port, auth=auth)
 
 # temp humid ros
 def callback_temp_ros(data):
     # rospy.loginfo(rospy.get_caller_id() + "temp_ros %d", data.data)
     publish.single("air_iot/temp_ros",data.data, hostname=hostname, port=port, auth=auth)
-
 def callback_humid_ros(data):
     # rospy.loginfo(rospy.get_caller_id() + "humid_ros %d", data.data)
     publish.single("air_iot/humid_ros",data.data, hostname=hostname, port=port, auth=auth)
@@ -89,12 +91,22 @@ def listener():
     # run simultaneously.
     rospy.init_node('Air_IOT_PI4', anonymous=True)
 
-    rospy.Subscriber("Air1_status", Int8MultiArray, callback_air1_status)
-    rospy.Subscriber("Air1_alarm", Int8MultiArray, callback_air1_alarm)
-        
-    rospy.Subscriber("Air2_status", Int8MultiArray, callback_air2_status)
-    rospy.Subscriber("Air2_alarm", Int8MultiArray, callback_air2_alarm)
-    
+    rospy.Subscriber("Air1_status", Int8, callback_air1_status)
+    rospy.Subscriber("Air1_auto_status", Int8, callback_air1_auto_status)
+    rospy.Subscriber("Air1_manual_status", Int8, callback_air1_manual_status)
+    rospy.Subscriber("Air1_alarm", Int8, callback_air1_alarm)
+    rospy.Subscriber("Air1_cb", Int8, callback_air1_cb)
+    rospy.Subscriber("Air1_low_pressure", Int8, callback_air1_low)
+    rospy.Subscriber("Air1_high_pressure", Int8, callback_air1_high)
+
+    rospy.Subscriber("Air2_status", Int8, callback_air2_status)
+    rospy.Subscriber("Air2_auto_status", Int8, callback_air2_auto_status)
+    rospy.Subscriber("Air2_manual_status", Int8, callback_air2_manual_status)
+    rospy.Subscriber("Air2_alarm", Int8, callback_air2_alarm)
+    rospy.Subscriber("Air2_cb", Int8, callback_air2_cb)
+    rospy.Subscriber("Air2_low_pressure", Int8, callback_air2_low)
+    rospy.Subscriber("Air2_high_pressure", Int8, callback_air2_high)
+
     rospy.Subscriber("temp_ros", Float32, callback_temp_ros)
     rospy.Subscriber("humid_ros", Float32, callback_humid_ros)
 
