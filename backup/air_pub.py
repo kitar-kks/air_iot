@@ -66,8 +66,8 @@ def talker():
             rospy.loginfo(set_dcfan_step)
             Rset_dcfan_step.publish(set_dcfan_step)     
         # rospy.loginfo(time_for_arduino)
-        # Rtemp_cpu_pi.publish(cpu.temperature)
-        # rospy.Timer(rospy.Duration(3), send_temp_cpu_pi)
+        Rtemp_cpu_pi.publish(cpu.temperature)
+        rospy.Timer(rospy.Duration(3), send_temp_cpu_pi)
         rate.sleep()
 
 if __name__ == '__main__':

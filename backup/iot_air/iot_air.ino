@@ -183,6 +183,7 @@ ros::Subscriber<std_msgs::Float32> temp_cpu_pi("set_temp_cpu_pi", &setting_temp_
 
 void setup() {
    nh.initNode();
+   Serial.begin(19200);
    nh.advertise(air1cb);
    nh.advertise(air1alarm);
    nh.advertise(air1low);
@@ -286,7 +287,7 @@ void setup() {
   // Init in receive mode
   digitalWrite(MAX485_RE_NEG, 0);
   digitalWrite(MAX485_DE, 0);
-  Serial1.begin(4800);
+  Serial1.begin(9600);
   node.begin(1, Serial1);  
   node.preTransmission(preTransmission);
   node.postTransmission(postTransmission);
@@ -349,6 +350,15 @@ void loop() {
     Rhumid.data = humid;
     temp_ros.publish(&Rtemp);
     humid_ros.publish(&Rhumid);
+    Serial.print("Air1 cb :");
+    Serial.println(RAir1_cb.data);
+    Serial.print("alarm :");
+    Serial.println(RAir1_alarm.data);
+    Serial.print("low :");
+    Serial.println(RAir1_low_pressure.data);
+    Serial.print("high :");
+    Serial.println(RAir1_high_pressure.data);
+    Serial.println("-----------");
     previous_time = millis();
     
   }
@@ -721,6 +731,7 @@ void loop() {
         {
            RAir1_auto.data = digitalRead(Air1_auto_status);
            air1autostatus.publish(&RAir1_auto);
+           digitalWrite(Air1_onoff_control,HIGH); // off
            myNex.writeNum("p0.pic",2);
            Air1_auto_status_on = false;
            Air1_auto_status_work = true;
@@ -766,6 +777,7 @@ void loop() {
         {
           RAir2_auto.data = digitalRead(Air2_auto_status);
           air2autostatus.publish(&RAir2_auto);
+          digitalWrite(Air2_onoff_control,HIGH); // off
           myNex.writeNum("p1.pic",2);
           Air2_auto_status_on = false;
           time_Air2_auto_status_off = millis();
