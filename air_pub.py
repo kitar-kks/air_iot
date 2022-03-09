@@ -13,7 +13,7 @@ auth = {
  'password':'p@ssw0rd'
 }
 mqtt_topic = [("air_iot/set_time",0) ,("air_iot/set_temp_on",0) ,("air_iot/set_temp_off",0) ,("air_iot/set_humid_on",0) ,
-("air_iot/set_humid_off",0),("air_iot/set_dcfan_temp_on",0),("air_iot/set_dcfan_step",0)]
+("air_iot/set_humid_off",0),("air_iot/set_dcfan_temp_on",0),("air_iot/set_dcfan_step",0),("air_iot/web_reset",0)]
 
 cpu = CPUTemperature()
 def send_temp_cpu_pi(event):
@@ -30,7 +30,7 @@ def talker():
     Rset_humid_off = rospy.Publisher('set_humid_off', Int8, queue_size=10)
     Rset_dcfan_temp_on = rospy.Publisher('set_dcfan_temp_on', Int8, queue_size=10)
     Rset_dcfan_step = rospy.Publisher('set_dcfan_step', Float32, queue_size=10)
-    Rtemp_cpu_pi = rospy.Publisher ('set_temp_cpu_pi' , Float32, queue_size=10)
+    Rweb_reset = rospy.Publisher ('reset_controller' , Int8, queue_size=10)
     
     rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
@@ -64,7 +64,12 @@ def talker():
         if(msg.topic == 'air_iot/set_dcfan_step'):
             set_dcfan_step = float(msg.payload)
             rospy.loginfo(set_dcfan_step)
-            Rset_dcfan_step.publish(set_dcfan_step)     
+            Rset_dcfan_step.publish(set_dcfan_step) 
+        
+        if(msg.topic == 'air_iot/web_reset'):
+            set_reset = int(msg.payload)
+            rospy.loginfo(set_reset)
+            Rweb_reset.publish(set_reset)       
         # rospy.loginfo(time_for_arduino)
         # Rtemp_cpu_pi.publish(cpu.temperature)
         # rospy.Timer(rospy.Duration(3), send_temp_cpu_pi)
